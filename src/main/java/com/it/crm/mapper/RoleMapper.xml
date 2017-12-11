@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.crm.mapper.RoleMapper">
+  <resultMap id="BaseResultMap" type="com.it.crm.domain.Role">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="sn" jdbcType="VARCHAR" property="sn" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <collection property="permission" ofType="com.it.crm.domain.Permission" columnPrefix="p_" >
+            <id property="id" column="id" />
+            <result property="name" column="name"/>
+    </collection>
+  </resultMap>
+  <delete id="deleteByPrimaryKey">
+    delete from role
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id"  useGeneratedKeys="true">
+    insert into role(
+        sn,
+        name
+    )
+    values (
+        #{sn,jdbcType=VARCHAR},
+        #{name,jdbcType=VARCHAR}
+    )
+  </insert>
+
+  <insert id="createRelation">
+    INSERT INTO permission_role(permission_id,role_id)
+    values(
+        #{permissionId},
+        #{roleId}
+    )
+  </insert>
+
+  <update id="updateByPrimaryKey" >
+    update role
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="sn !=null">
+        sn = #{sn,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+    select id, sn, name
+    from role
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, sn, name
+    from role
+  </select>
+
+  <select id="queryPermissionById" resultMap="BaseResultMap">
+      select
+        r.name r_name,
+        r.id r_id,
+        p.id p_id,
+        p.name p_name
+      from role r
+      LEFT JOIN permission_role pr
+      on r.id=pr.role_id
+      LEFT JOIN permission p
+      on p.id=pr.permission_id
+      WHERE r.id = #{id}
+  </select>
+
+  <delete id="delAllPermissionById">
+      DELETE FROM  permission_role WHERE role_id = #{id}
+  </delete>
+
+  <select id="queryRolesByUserId" resultMap="BaseResultMap">
+    SELECT
+    r.id r_id,
+    r.sn r_sn,
+    r.name r_name
+    FROM role r join employee_role er on r.id = er.role_id
+    WHERE er.employee_id =#{id}
+  </select>
+</mapper>

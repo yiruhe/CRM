@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.crm.mapper.PermissionMapper">
+  <resultMap id="BaseResultMap" type="com.it.crm.domain.Permission">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="resource" jdbcType="VARCHAR" property="resource" />
+  </resultMap>
+
+  <insert id="insert" keyColumn="id" keyProperty="id"  useGeneratedKeys="true">
+    insert into permission (name, resource)
+    values (#{name,jdbcType=VARCHAR}, #{resource,jdbcType=VARCHAR})
+  </insert>
+  <update id="updateByPrimaryKey" >
+    update permission
+    set name = #{name,jdbcType=VARCHAR},
+      resource = #{resource,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey"  resultMap="BaseResultMap">
+    select id, name, resource
+    from permission
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, name, resource
+    from permission
+  </select>
+
+  <select id="selectAllName" resultMap="BaseResultMap">
+    SELECT id,name
+     FROM permission
+  </select>
+
+  <select id="selectByEmployeeId" resultMap="BaseResultMap">
+      select * from permission p
+      join permission_role pr on p.id = pr.permission_id
+      join employee_role er on er.role_id = pr.role_id
+      where er.employee_id = #{id}
+  </select>
+</mapper>

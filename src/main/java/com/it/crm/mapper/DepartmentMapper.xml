@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--suppress ALL -->
+<mapper namespace="com.it.crm.mapper.DepartmentMapper">
+  <resultMap id="BaseResultMap" type="com.it.crm.domain.Department">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="dept_no" jdbcType="BIGINT" property="deptNo" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="state" jdbcType="TINYINT" property="state" />
+ <!--   <result column="parent_dept_id" jdbcType="BIGINT" property="parentDeptId" />-->
+    <!--<result column="manager" jdbcType="BIGINT" property="manager" />-->
+  </resultMap>
+  <delete id="deleteByPrimaryKey">
+    UPDATE deprtment SET state = 0 WHERE  id =#{id}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id"  useGeneratedKeys="true">
+    insert into department (
+                  dept_no,
+                  name,
+                  manager,
+                  state,
+                  parent_dept_id)
+    values (
+            #{deptNo,jdbcType=BIGINT},
+            #{name,jdbcType=VARCHAR},
+            #{manager,jdbcType=BIGINT},
+            #{state,jdbcType=TINYINT},
+            #{parentDept.id,jdbcType=BIGINT}
+          )
+  </insert>
+  <update id="updateByPrimaryKey">
+    update department
+    set
+
+      <if test="deptNo != null">
+        dept_no = #{deptNo,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=TINYINT},
+      </if>
+      <if test="parentDept.id != null">
+        parent_dept_id = #{parentDept.id,jdbcType=BIGINT}
+      </if>
+      <if test="manager.id != null">
+        manager = #{manager.id,jdbcType=BIGINT},
+      </if>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectByPrimaryKey"  resultMap="BaseResultMap">
+    select id, dept_no, name, state
+    from department
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
+    select id, dept_no, name, state
+    from department
+  </select>
+
+
+  <select id="selectAllName" resultMap="BaseResultMap">
+    SELECT id,name
+    from department
+  </select>
+
+</mapper>
